@@ -1,0 +1,14 @@
+.choice-tab td, th{
+    border: solid black 2px;
+    padding: 20px;
+    font-size: 35px;
+}
+
+.cover {
+    background-color: black;
+    padding: 10px;
+}
+
+.n-cell {
+    visibility: hidden;
+}

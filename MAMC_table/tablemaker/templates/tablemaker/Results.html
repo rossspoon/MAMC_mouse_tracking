@@ -1,0 +1,17 @@
+{{ block title }}
+    Results
+{{ endblock }}
+
+{{ block content }}
+
+    <span style="font-size: 20px;">You selected <em>{{ player.choice }}</em></span>
+
+    <h1> You clicked on  (col, row):</h1>
+    <ul>
+        {{ for click in clicks }}
+            <li>{{ click.seq }}:  ( {{ click.x }}, {{click.y }})</li>
+        {{ endfor }}
+    </ul>
+{{ endblock }}
+
+

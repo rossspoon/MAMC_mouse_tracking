@@ -1,0 +1,31 @@
+{{ block title }}
+    Table of Numbers
+{{ endblock }}
+{{ block content }}
+
+    <link rel="stylesheet" href="{{ static 'css/table-styles.css' }}">
+    <script src="{{ static 'js/table.js' }}"></script>
+
+    {{ formfield_errors 'choice' }}
+    <input type="hidden" name="choice" id="choice"/>
+
+    <table class="choice-tab">
+        {{ for key, r in numbers.items() }}
+        <tr>
+            <td>
+                <input type="radio" class="choice-rad" name="choice" id="choice_{{ key }}" value="{{ key }}"/>
+                <label for="choice_{{ key }}">{{ key }}</label>
+            </td>
+            {{ for n in r }}
+                <td class="choice-content">
+                    <div class="cover">
+                        <div class="n-cell"> {{ n }} </div>
+                    </div>
+                </td>
+            {{ endfor }}
+        </tr>
+        {{ endfor }}
+    </table>
+    {{ next_button }}
+
+{{ endblock }}
