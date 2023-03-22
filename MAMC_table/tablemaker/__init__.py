@@ -35,8 +35,6 @@ def get_numbers():
     # Then I reshape the list into the 5x5 matrix of values.  Then transpose it.
     matrix = np.concatenate(number_lists).reshape((num_attrs, num_options)).T
 
-    print(matrix)
-
     # Like this list comprehension above, the dict comprehension can transform one
     # iterable into another.   Here, I'm changing a list of integers (the range function)
     # into the return map of {<LABEL>:  <ATTRIBUTE_VALUES>}
