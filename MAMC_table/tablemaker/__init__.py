@@ -1,22 +1,37 @@
 from otree.api import *
-
+import numpy as np
 
 doc = """
 Test app for generating the choice table.
 """
 
+
 def get_numbers():
+    my_list1 = np.random.normal(loc=50, scale=np.sqrt(10), size=5)
+    my_list_round1 = np.round(my_list1).astype(int).tolist()
+
+    my_list2 = np.random.normal(loc=50, scale=np.sqrt(100), size=5)
+    my_list_round2 = np.round(my_list2).astype(int).tolist()
+
+    my_list3 = np.random.normal(loc=50, scale=np.sqrt(200), size=5)
+    my_list_round3 = np.round(my_list3).astype(int).tolist()
+
+    my_list4 = np.random.normal(loc=50, scale=np.sqrt(300), size=5)
+    my_list_round4 = np.round(my_list4).astype(int).tolist()
+
+    my_list5 = np.random.normal(loc=50, scale=np.sqrt(400), size=5)
+    my_list_round5 = np.round(my_list5).astype(int).tolist()
+
     """
     Modify this function to generate the numbers.
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-    return {"A": [45, 29, 30, 10, 38],
-            "B": [84, 92, 13, 28, 38],
-            "C": [33, 29, 61, 91, 58],
-            "D": [12, 58, 39, 22, 73]}
-
-
+    return {"A":  my_list_round1,
+            "B":  my_list_round2,
+            "C":  my_list_round3,
+            "D":  my_list_round4,
+            "E":  my_list_round5}
 
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
@@ -45,8 +60,8 @@ class TableClick(ExtraModel):
 
 # PAGES
 class TablePage(Page):
-    form_model='player'
-    form_fields=['choice']
+    form_model = 'player'
+    form_fields = ['choice']
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -63,13 +78,14 @@ class TablePage(Page):
             seq = data.get('seq')
             x = data.get('x')
             y = data.get('y')
-            TableClick.create(player=player, seq=seq,  x=x, y=y)
+            TableClick.create(player=player, seq=seq, x=x, y=y)
 
 
 class Results(Page):
     @staticmethod
     def vars_for_template(player: Player):
         clicks = TableClick.filter(player=player)
-        return dict(clicks = clicks)
+        return dict(clicks=clicks)
+
 
 page_sequence = [TablePage, Results]
