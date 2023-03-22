@@ -7,31 +7,29 @@ Test app for generating the choice table.
 
 
 def get_numbers():
-    my_list1 = np.random.normal(loc=50, scale=np.sqrt(10), size=5)
-    my_list_round1 = np.round(my_list1).astype(int).tolist()
-
-    my_list2 = np.random.normal(loc=50, scale=np.sqrt(100), size=5)
-    my_list_round2 = np.round(my_list2).astype(int).tolist()
-
-    my_list3 = np.random.normal(loc=50, scale=np.sqrt(200), size=5)
-    my_list_round3 = np.round(my_list3).astype(int).tolist()
-
-    my_list4 = np.random.normal(loc=50, scale=np.sqrt(300), size=5)
-    my_list_round4 = np.round(my_list4).astype(int).tolist()
-
-    my_list5 = np.random.normal(loc=50, scale=np.sqrt(400), size=5)
-    my_list_round5 = np.round(my_list5).astype(int).tolist()
-
     """
     Modify this function to generate the numbers.
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-    return {"A":  my_list_round1,
-            "B":  my_list_round2,
-            "C":  my_list_round3,
-            "D":  my_list_round4,
-            "E":  my_list_round5}
+
+    variances = [10, 100, 200, 300, 400]
+    labels = ["A", "B", "C", "D", "E"]
+    num_options = len(labels)
+    number_lists = [np.random.normal(loc=50, scale=np.sqrt(v), size=num_options).astype(int) for v in variances]
+
+    matrix = np.concatenate(number_lists).reshape((5,5)).T
+    ret_val = {labels[i]: matrix[i, :].tolist() for i in range(num_options)}
+
+    # Uncomment here to check that the "columns" of the
+    # returned dict match up with the "rows" of the
+    # that we generated randomly
+    #print(ret_val)
+    #print(number_lists[4])
+
+    return ret_val
+
+
 
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
@@ -48,7 +46,7 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    choice = models.StringField();
+    choice = models.StringField()
 
 
 class TableClick(ExtraModel):
