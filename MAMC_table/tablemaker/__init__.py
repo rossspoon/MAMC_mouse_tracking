@@ -6,6 +6,9 @@ Test app for generating the choice table.
 """
 
 
+def get_attr_values(v, n):
+    return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
+
 def get_numbers():
     """
     Modify this function to generate the numbers.
@@ -15,10 +18,28 @@ def get_numbers():
 
     variances = [10, 100, 200, 300, 400]
     labels = ["A", "B", "C", "D", "E"]
+    num_attrs = len(variances)
     num_options = len(labels)
-    number_lists = [np.random.normal(loc=50, scale=np.sqrt(v), size=num_options).astype(int) for v in variances]
 
-    matrix = np.concatenate(number_lists).reshape((5,5)).T
+    # Loop over the variances and generate the values for each one.
+    # This particular syntax is called a list comprehension
+    #  it is quite useful for transforming an iterable of one thing into another.
+    # Here we are transforming the list of variances into a list of lists of the
+    # random attribute values.
+    number_lists = [get_attr_values(v, num_options) for v in variances]
+
+
+    # As you thought to do, I'm transposing the matrix.
+    # First the concatenate function joins all the lists from number_list into
+    # one long list.
+    # Then I reshape the list into the 5x5 matrix of values.  Then transpose it.
+    matrix = np.concatenate(number_lists).reshape((num_attrs, num_options)).T
+
+    print(matrix)
+
+    # Like this list comprehension above, the dict comprehension can transform one
+    # iterable into another.   Here, I'm changing a list of integers (the range function)
+    # into the return map of {<LABEL>:  <ATTRIBUTE_VALUES>}
     ret_val = {labels[i]: matrix[i, :].tolist() for i in range(num_options)}
 
     # Uncomment here to check that the "columns" of the
