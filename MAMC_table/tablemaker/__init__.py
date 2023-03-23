@@ -84,7 +84,6 @@ class TablePage(Page):
     def vars_for_template(player: Player):
         numbers = get_numbers()
         return dict(numbers=numbers,
-                    indexes=list(range(len(numbers))),
                     form_fields=['choice'],
                     )
 
