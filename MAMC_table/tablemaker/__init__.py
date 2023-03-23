@@ -21,6 +21,7 @@ def get_numbers():
     num_attrs = len(variances)
     num_options = len(labels)
 
+
     # Loop over the variances and generate the values for each one.
     # This particular syntax is called a list comprehension
     #  it is quite useful for transforming an iterable of one thing into another.
@@ -79,11 +80,14 @@ class TableClick(ExtraModel):
 class TablePage(Page):
     form_model = 'player'
     form_fields = ['choice']
+    timeout_seconds = 15
 
     @staticmethod
     def vars_for_template(player: Player):
         numbers = get_numbers()
+        attributes = ["Options/Attributes", "I", "II", "III", "IV", "V"]
         return dict(numbers=numbers,
+                    column_names=attributes,
                     indexes=list(range(len(numbers))),
                     form_fields=['choice'],
                     )

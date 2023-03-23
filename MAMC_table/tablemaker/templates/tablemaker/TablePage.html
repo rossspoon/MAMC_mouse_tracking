@@ -2,15 +2,23 @@
     Table of Numbers
 {{ endblock }}
 {{ block content }}
-
-    <link rel="stylesheet" href="{{ static 'css/table-styles.css' }}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/table-styles.css' %}">
     <script src="{{ static 'js/table.js' }}"></script>
 
     {{ formfield_errors 'choice' }}
     <input type="hidden" name="choice" id="choice"/>
 
     <table class="choice-tab">
+        <thead>
+          <tr>
+            {% for name in column_names %}
+            <th>{{ name }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
         {{ for key, r in numbers.items() }}
+
         <tr>
             <td>
                 <input type="radio" class="choice-rad" name="choice" id="choice_{{ key }}" value="{{ key }}"/>
@@ -25,6 +33,7 @@
             {{ endfor }}
         </tr>
         {{ endfor }}
+        </tbody>
     </table>
     {{ next_button }}
 
