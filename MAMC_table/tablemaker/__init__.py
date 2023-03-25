@@ -1,5 +1,6 @@
 from otree.api import *
 import numpy as np
+from time import time
 
 doc = """
 Test app for generating the choice table.
@@ -9,15 +10,13 @@ Test app for generating the choice table.
 def get_attr_values(v, n):
     return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
 
-def get_numbers():
+def get_numbers(variances=[10, 100, 200, 300, 400], labels=["A", "B", "C", "D", "E"]):
     """
     Modify this function to generate the numbers.
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
 
-    variances = [10, 100, 200, 300, 400]
-    labels = ["A", "B", "C", "D", "E"]
     num_attrs = len(variances)
     num_options = len(labels)
 
@@ -67,13 +66,38 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     choice = models.StringField()
+    start_time = models.IntegerField(initial=-1)
+    duration = models.IntegerField(initial=-1)
 
 
-class TableClick(ExtraModel):
+class TileClick(ExtraModel):
     player = models.Link(Player)
     seq = models.IntegerField()
+    timestamp = models.IntegerField()
     x = models.IntegerField()
     y = models.IntegerField()
+
+class OptionClick(ExtraModel):
+    player = models.Link(Player)
+    seq = models.IntegerField()
+    timestamp = models.IntegerField()
+    option = models.StringField()
+
+
+def table_page_live_method(player, data):
+    func = data.get('func')
+    if func == 'tile-click':
+        seq = data.get('seq')
+        ts = data.get('ts')
+        x = data.get('x')
+        y = data.get('y')
+        TileClick.create(player=player, seq=seq, timestamp=ts, x=x, y=y)
+
+    elif func == 'option-click':
+        seq = data.get('seq')
+        ts = data.get('ts')
+        option = data.get('option')
+        OptionClick.create(player=player, seq=seq, timestamp=ts, option=option)
 
 
 # PAGES
@@ -84,6 +108,9 @@ class TablePage(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
+        # record the start time
+        player.start_time = round(time() * 1000)
+
         numbers = get_numbers()
         attributes = ["Options/Attributes", "I", "II", "III", "IV", "V"]
         return dict(numbers=numbers,
@@ -93,20 +120,23 @@ class TablePage(Page):
                     )
 
     @staticmethod
-    def live_method(player, data):
-        func = data.get('func')
-        if func == 'cell-click':
-            seq = data.get('seq')
-            x = data.get('x')
-            y = data.get('y')
-            TableClick.create(player=player, seq=seq, x=x, y=y)
+    def before_next_page(player: Player, timeout_happened):
+        if timeout_happened:
+            return
+
+        ts = round(time() * 1000)
+        player.duration = ts - player.start_time
+
+    live_method = table_page_live_method
+
 
 
 class Results(Page):
     @staticmethod
     def vars_for_template(player: Player):
-        clicks = TableClick.filter(player=player)
-        return dict(clicks=clicks)
+        tile_clicks = TileClick.filter(player=player)
+        opt_clicks = OptionClick.filter(player=player)
+        return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
 
 page_sequence = [TablePage, Results]
