@@ -1,6 +1,8 @@
 from otree.api import *
 import numpy as np
 from time import time
+import random
+import roman
 
 doc = """
 Test app for generating the choice table.
@@ -10,24 +12,31 @@ Test app for generating the choice table.
 def get_attr_values(v, n):
     return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
 
-def get_numbers(variances=[10, 100, 200, 300, 400], labels=["A", "B", "C", "D", "E"]):
+def variances(v=[10, 100, 200, 300, 400]):
+    va = random.sample(v, 5)
+    return va
+def col_names():
+
+    var_list = variances()
+    var_dict = {v: roman.toRoman(i) for i, v in enumerate(sorted(var_list), start=1)}
+    col_names = ["Options/Attributes"] + [var_dict[v] for v in var_list]
+    return col_names
+
+def get_numbers(labels=["A", "B", "C", "D", "E"]):
     """
     Modify this function to generate the numbers.
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-
-    num_attrs = len(variances)
+    num_attrs = 5
     num_options = len(labels)
-
 
     # Loop over the variances and generate the values for each one.
     # This particular syntax is called a list comprehension
     #  it is quite useful for transforming an iterable of one thing into another.
     # Here we are transforming the list of variances into a list of lists of the
     # random attribute values.
-    number_lists = [get_attr_values(v, num_options) for v in variances]
-
+    number_lists = [get_attr_values(v, num_options) for v in variances([10, 100, 200, 300, 400])]
 
     # As you thought to do, I'm transposing the matrix.
     # First the concatenate function joins all the lists from number_list into
@@ -43,11 +52,10 @@ def get_numbers(variances=[10, 100, 200, 300, 400], labels=["A", "B", "C", "D", 
     # Uncomment here to check that the "columns" of the
     # returned dict match up with the "rows" of the
     # that we generated randomly
-    #print(ret_val)
-    #print(number_lists[4])
+    # print(ret_val)
+    # print(number_lists[4])
 
     return ret_val
-
 
 
 class C(BaseConstants):
@@ -76,6 +84,7 @@ class TileClick(ExtraModel):
     timestamp = models.IntegerField()
     x = models.IntegerField()
     y = models.IntegerField()
+
 
 class OptionClick(ExtraModel):
     player = models.Link(Player)
@@ -110,9 +119,8 @@ class TablePage(Page):
     def vars_for_template(player: Player):
         # record the start time
         player.start_time = round(time() * 1000)
-
         numbers = get_numbers()
-        attributes = ["Options/Attributes", "I", "II", "III", "IV", "V"]
+        attributes = col_names()
         return dict(numbers=numbers,
                     column_names=attributes,
                     indexes=list(range(len(numbers))),
@@ -128,7 +136,6 @@ class TablePage(Page):
         player.duration = ts - player.start_time
 
     live_method = table_page_live_method
-
 
 
 class Results(Page):
