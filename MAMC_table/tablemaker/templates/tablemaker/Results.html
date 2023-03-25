@@ -4,13 +4,21 @@
 
 {{ block content }}
 
-    <span style="font-size: 20px;">You selected <em>{{ player.choice }}</em></span>
+    <div style="font-size: 20px;">You selected <em>{{ player.choice }}</em></div>
+    <div> Time to select: {{ player.duration }}</div>
 
     <h1> You clicked on  (col, row):</h1>
     <ul>
-        {{ for click in clicks }}
-            <li>{{ click.seq }}:  ( {{ click.x }}, {{click.y }})</li>
+        {{ for click in tile_clicks }}
+            <li>{{ click.seq }}:  ( {{ click.x }}, {{click.y }}) ts: {{ click.timestamp }}</li>
         {{ endfor }}
+    </ul>
+
+    <h1> Option Selection</h1>
+    <ul>
+        {{ for click in opt_clicks }}
+             <li>{{ click.seq }}:  {{ click.option }} ts: {{ click.timestamp }}</li>
+       {{ endfor }}
     </ul>
     {{ next_button }}
 {{ endblock }}
