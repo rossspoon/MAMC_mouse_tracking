@@ -8,21 +8,24 @@ doc = """
 Test app for generating the choice table.
 """
 
+VAR_LIST = [10, 100, 200, 300, 400]
 
 def get_attr_values(v, n):
     return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
 
-def variances(v=[10, 100, 200, 300, 400]):
-    va = random.sample(v, 5)
-    return va
-def col_names():
 
-    var_list = variances()
-    var_dict = {v: roman.toRoman(i) for i, v in enumerate(sorted(var_list), start=1)}
-    col_names = ["Options/Attributes"] + [var_dict[v] for v in var_list]
+def sample_var_list(variances=VAR_LIST):
+    va = random.sample(variances, 5)
+    return va
+
+
+def get_col_names(variances=VAR_LIST):
+    var_dict = {v: roman.toRoman(i) for i, v in enumerate(sorted(variances), start=1)}
+    col_names = ["Options/Attributes"] + [var_dict[v] for v in variances]
     return col_names
 
-def get_numbers(labels=["A", "B", "C", "D", "E"]):
+
+def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
     """
     Modify this function to generate the numbers.
     :return:  The return object is a dict where the key is the label and
@@ -36,7 +39,7 @@ def get_numbers(labels=["A", "B", "C", "D", "E"]):
     #  it is quite useful for transforming an iterable of one thing into another.
     # Here we are transforming the list of variances into a list of lists of the
     # random attribute values.
-    number_lists = [get_attr_values(v, num_options) for v in variances([10, 100, 200, 300, 400])]
+    number_lists = [get_attr_values(v, num_options) for v in variances]
 
     # As you thought to do, I'm transposing the matrix.
     # First the concatenate function joins all the lists from number_list into
@@ -119,10 +122,12 @@ class TablePage(Page):
     def vars_for_template(player: Player):
         # record the start time
         player.start_time = round(time() * 1000)
-        numbers = get_numbers()
-        attributes = col_names()
+
+        var_list = sample_var_list()
+        numbers = get_numbers(variances=var_list)
+        col_names = get_col_names(variances=var_list)
         return dict(numbers=numbers,
-                    column_names=attributes,
+                    column_names=col_names,
                     indexes=list(range(len(numbers))),
                     form_fields=['choice'],
                     )
