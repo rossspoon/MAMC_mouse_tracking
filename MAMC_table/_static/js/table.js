@@ -1,8 +1,7 @@
 $(window).on('load', function () {
 
-    let tile_click_order = 0;
-    let opt_click_order = 0;
-    let start_time = Date.now();
+    let tile_click_order = js_vars.tile_click_order;
+    let opt_click_order = js_vars.opt_click_order;
 
     $('.choice-tile').each(function(idx){
         let row_len = $(this).siblings().length;
@@ -18,10 +17,8 @@ $(window).on('load', function () {
 
         // Send click information
         opt_click_order += 1;
-        let ts = Date.now() - start_time;
         liveSend({'func': 'option-click',
                         'seq': opt_click_order,
-                        'ts': ts,
                         'option': c,
                         });
 
@@ -36,13 +33,11 @@ $(window).on('load', function () {
 
         // Send results
         tile_click_order += 1;
-        let ts = Date.now() - start_time;
         let td = $(this).parents('td');
         let x = td.attr('x');
         let y = td.attr('y');
         liveSend({'func': 'tile-click',
                         'seq': tile_click_order,
-                        'ts': ts,
                         'x': x, 'y': y});
     });
 });
