@@ -1,8 +1,10 @@
+import statsmodels.sandbox.distributions.extras
 from otree.api import *
 import numpy as np
 from time import time
 import random
 import roman
+import json
 
 doc = """
 Test app for generating the choice table.
@@ -80,6 +82,9 @@ class Player(BasePlayer):
     start_time = models.IntegerField(initial=-1)
     duration = models.IntegerField(initial=-1)
 
+    numbers = models.StringField(blank=True)
+    var_list = models.StringField(blank=True)
+
 
 class TileClick(ExtraModel):
     player = models.Link(Player)
@@ -98,34 +103,52 @@ class OptionClick(ExtraModel):
 
 def table_page_live_method(player, data):
     func = data.get('func')
+    ts = round(time() * 1000)
+    page_time = ts - player.start_time
+
     if func == 'tile-click':
         seq = data.get('seq')
-        ts = data.get('ts')
         x = data.get('x')
         y = data.get('y')
-        TileClick.create(player=player, seq=seq, timestamp=ts, x=x, y=y)
+        TileClick.create(player=player, seq=seq, timestamp=page_time, x=x, y=y)
 
     elif func == 'option-click':
         seq = data.get('seq')
-        ts = data.get('ts')
         option = data.get('option')
-        OptionClick.create(player=player, seq=seq, timestamp=ts, option=option)
+        OptionClick.create(player=player, seq=seq, timestamp=page_time, option=option)
 
 
 # PAGES
 class TablePage(Page):
     form_model = 'player'
     form_fields = ['choice']
-    timeout_seconds = 15
+    timeout_seconds = 1500
 
     @staticmethod
     def vars_for_template(player: Player):
-        # record the start time
-        player.start_time = round(time() * 1000)
+        if player.field_maybe_none('start_time') == -1:
+            ts = round(time() * 1000)
+            player.start_time = ts
 
-        var_list = sample_var_list()
-        numbers = get_numbers(variances=var_list)
+        # retrieve the var_list or create a new one
+        var_list_raw = player.field_maybe_none('var_list')
+        if var_list_raw:
+            var_list = json.loads(var_list_raw)
+        else:
+            var_list = sample_var_list()
+            player.var_list = json.dumps(var_list)
+
+        # retrieve number grid or create a new one
+        numbers_raw = player.field_maybe_none('numbers')
+        if numbers_raw:
+            numbers = json.loads(numbers_raw)
+        else:
+            numbers = get_numbers(variances=var_list)
+            player.numbers = json.dumps(numbers)
+
+        # generate col_names from the var_list
         col_names = get_col_names(variances=var_list)
+
         return dict(numbers=numbers,
                     column_names=col_names,
                     indexes=list(range(len(numbers))),
@@ -139,6 +162,15 @@ class TablePage(Page):
 
         ts = round(time() * 1000)
         player.duration = ts - player.start_time
+
+    @staticmethod
+    def js_vars(player: Player):
+        # Number of clicks
+        tile_click_order = len(TileClick.filter(player=player))
+        opt_click_order = len(OptionClick.filter(player=player))
+
+        return dict(tile_click_order=tile_click_order,
+                    opt_click_order=opt_click_order)
 
     live_method = table_page_live_method
 
