@@ -119,10 +119,21 @@ def table_page_live_method(player, data):
 
 
 # PAGES
+
+class InformationSheet(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
+
+class Instructions(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
+
 class TablePage(Page):
     form_model = 'player'
     form_fields = ['choice']
-    timeout_seconds = 1500
+    timeout_seconds = 15
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -168,12 +179,10 @@ class TablePage(Page):
         # Number of clicks
         tile_click_order = len(TileClick.filter(player=player))
         opt_click_order = len(OptionClick.filter(player=player))
-
         return dict(tile_click_order=tile_click_order,
                     opt_click_order=opt_click_order)
 
     live_method = table_page_live_method
-
 
 class Results(Page):
     @staticmethod
@@ -183,4 +192,4 @@ class Results(Page):
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
 
-page_sequence = [TablePage, Results]
+page_sequence = [InformationSheet, Instructions, TablePage, Results]
