@@ -28,6 +28,7 @@
 .cover {
     background-color: black;
     padding: 10px;
+    width: 85px;
 }
 
 .n-cell {
