@@ -66,7 +66,7 @@ def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 10
+    NUM_ROUNDS = 40
 
 
 class Subsession(BaseSubsession):
@@ -119,11 +119,6 @@ def table_page_live_method(player, data):
 
 
 # PAGES
-
-class Instructions(Page):
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.round_number == 1
 
 class TablePage(Page):
     form_model = 'player'
@@ -187,4 +182,4 @@ class Results(Page):
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
 
-page_sequence = [Instructions, TablePage, Results]
+page_sequence = [TablePage, Results]

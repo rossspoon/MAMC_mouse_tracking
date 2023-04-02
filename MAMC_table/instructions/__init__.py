@@ -7,7 +7,7 @@ Your app description
 
 
 class C(BaseConstants):
-    NAME_IN_URL = 'information'
+    NAME_IN_URL = 'instructions'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = 1
 
@@ -25,9 +25,12 @@ class Player(BasePlayer):
 
 
 # PAGES
-class InformationSheet(Page):
-    pass
+class Instructions(Page):
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
 
 
 
-page_sequence = [InformationSheet]
+
+page_sequence = [Instructions]
