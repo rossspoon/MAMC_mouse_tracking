@@ -120,11 +120,6 @@ def table_page_live_method(player, data):
 
 # PAGES
 
-class InformationSheet(Page):
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.round_number == 1
-
 class Instructions(Page):
     @staticmethod
     def is_displayed(player: Player):
@@ -192,4 +187,4 @@ class Results(Page):
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
 
-page_sequence = [InformationSheet, Instructions, TablePage, Results]
+page_sequence = [Instructions, TablePage, Results]
