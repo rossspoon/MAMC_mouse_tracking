@@ -7,8 +7,20 @@ SESSION_CONFIGS = [
     #     num_demo_participants=3,
     # ),
 
-dict(name='table_test',
+dict(name='full_experiment',
      app_sequence=['information','instructions','tablemaker'],
+     num_demo_participants=1),
+
+dict(name='information',
+     app_sequence=['information'],
+     num_demo_participants=1),
+
+dict(name='instructions',
+     app_sequence=['instructions'],
+     num_demo_participants=1),
+
+dict(name='tablemaker',
+     app_sequence=['tablemaker'],
      num_demo_participants=1)
 ]
 
