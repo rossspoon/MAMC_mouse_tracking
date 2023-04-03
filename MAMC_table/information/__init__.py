@@ -2,7 +2,7 @@ from otree.api import *
 
 
 doc = """
-Your app description
+Show information sheet and get consent.
 """
 
 
@@ -21,13 +21,18 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    pass
+    consent_given = models.BooleanField()
 
 
 # PAGES
 class InformationSheet(Page):
-    pass
+    form_model = Player
+    form_fields = ['consent_given']
 
+class ConsentDeniedPage(Page):
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return not player.consent_given
 
-page_sequence = [InformationSheet]
+page_sequence = [InformationSheet, ConsentDeniedPage]

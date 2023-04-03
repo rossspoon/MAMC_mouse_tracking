@@ -1,4 +1,22 @@
 {{ block content }}
+<style>
+    .linksum{
+        text-align: left;
+        word-wrap: break-word;
+        max-width: 900px;
+        margin: auto;
+    }
+
+    IMG.display {
+        display: block;
+        margin-left: auto;
+        margin-right: auto
+    }
+</style>
+    <link rel="stylesheet" href="{{ static 'css/global-styles.css' }}">
+
+
+
 <img size="10" ,class="display", src="{{ static 'VT.png' }}"></img>
 
   <header>
@@ -55,27 +73,14 @@ human subjects involved in research.
   
     <p align="left"><br><b>Contact</b><br></p>
     <p align="left">If you have any questions, comments, or concerns regarding this study, please contact the responsible researcher: Thai Cao (email: thai.cao@kit.edu)</p>
-  
-    <p align="left"><br><b>If you would like to participate in this study, click "Next" to begin or "No" to exit.</b></p>
-    <p align="left">
-</main>
 
+    <div class="button-row">
+        <div> <b>If you would like to participate in this study, click "Yes" to begin or "No" to exit.</b></div>
+        <div class="buttons">
+            <button class='btn-look-alike' name="consent_given" value="True">Yes</button>
+            <button class='btn-look-alike' name="consent_given" value="False">No</button>
+        </div>
+    </div>
 
-<style>
-    .linksum{
-    text-align: left;
-    word-wrap: break-word;
-    max-width: 900px;
-    margin: auto;
-  }
-
-IMG.display {
-display: block;
-  margin-left: auto;
-  margin-right: auto}
-  </style>
-
-    {{ formfields }}
-    {{ next_button }}
 
 {{ endblock }}
