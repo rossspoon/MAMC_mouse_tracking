@@ -8,7 +8,7 @@ SESSION_CONFIGS = [
     # ),
 
 dict(name='full_experiment',
-     app_sequence=['information','instructions','tablemaker'],
+     app_sequence=['information','instructions','quiz','tablemaker'],
      num_demo_participants=1),
 
 dict(name='information',
@@ -17,6 +17,10 @@ dict(name='information',
 
 dict(name='instructions',
      app_sequence=['instructions'],
+     num_demo_participants=1),
+
+dict(name='quiz',
+     app_sequence=['quiz'],
      num_demo_participants=1),
 
 dict(name='tablemaker',
