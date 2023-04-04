@@ -26,11 +26,12 @@ class Player(BasePlayer):
 
 # PAGES
 class Instructions(Page):
-    @staticmethod
-    def is_displayed(player: Player):
-        return player.round_number == 1
+    pass
+
+class Instructionspg2(Page):
+    pass
 
 
 
 
-page_sequence = [Instructions]
+page_sequence = [Instructions, Instructionspg2]
