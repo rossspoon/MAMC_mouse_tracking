@@ -1,0 +1,55 @@
+{{ block content }}
+
+  <header>
+      <h1 align="center">Other Relevant Information</h1>
+  </header>
+  
+  <main>
+  <div> <!--used to align everything left-->
+         <p align="left"><br><b>
+             About the attributes
+    </b></p>
+    <p style="text-align: justify">
+      The values for each attribute (I, II, III, IV, V) will be chosen from a normal distribution with the mean of 50. The values of the variances of the attributes increase in this order: I < II < III < IV< V. So, values of attribute I have the lowest spread while those of attribute V have the highest.  </p>
+         <p align="left"><br><b>
+             Time Limit
+    </b></p>
+    <p>
+       In each period, you have 15 seconds to click on the checkbox corresponding to your choice among options A, B, C, D and E. If you do not click the checkbox prior to the end of the period (i.e., within 15 seconds of the period starting), your selection will not be submitted. Only by selecting an option prior to the end of the period will your choice be submitted for the period. <br></p>
+             <p align="left"><br><b>
+             Earnings
+    </b></p>
+
+      <p style="text-align: justify"> In each period, your per-period payoffs simply the value of the option you have chosen. 1 period out of the 40 periods will be chosen at random and your cash earnings will be the sum of the per-period payoffs for this one period, converted to US Dollars. The exchange rate will be as follows: $1 = 100 ECU. So, if your chosen option has a value of 250 ECU, you will get $2.50. Your total cash earnings will be added to your participation fee of $2.00. Again please remember, one trial out of 40 trials will be chosen randomly for payment so you must pay close attention in every round.  </p>
+
+              <p align="left"><br><b>
+             Survey
+    </b></p>
+
+      <p style="text-align: justify"> At the end of the part A of 40 rounds, you will be requested to answer a few survey questions. Payment will be made at the end once you complete the survey.  </p>
+
+    <p style="text-align: justify">
+       The next page has a simple Quiz to test your understanding of the task. There is no time limit. Please try to answer the questions as carefully as you can. Click "Next" to take the Quiz.
+      </p>
+
+  </main>
+
+
+<style>
+    .linksum{
+    text-align: left;
+    word-wrap: break-word;
+    max-width: 900px;
+    margin: auto;
+  }
+
+IMG.display {
+display: block;
+  margin-left: auto;
+  margin-right: auto}
+  </style>
+
+    {{ formfields }}
+    {{ next_button }}
+
+{{ endblock }}
