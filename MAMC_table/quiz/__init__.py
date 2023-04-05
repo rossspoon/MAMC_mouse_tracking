@@ -3,7 +3,7 @@ from time import time
 
 
 doc = """
-Test app for generating the choice table.
+QUIZ
 """
 
 def get_numbers():
@@ -12,11 +12,11 @@ def get_numbers():
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-    return {"A": [45, 29, 30, 10, 38],
-            "B": [84, 92, 13, 28, 38],
-            "C": [33, 29, 61, 91, 58],
-            "D": [12, 58, 39, 22, 73],
-            "E": [50, 50, 50, 50, 50]}
+    return {"A": [50, 40, 30, 20, 100],
+            "B": [52, 62, 35, 58, 8],
+            "C": [48, 50, 61, 91, 90],
+            "D": [51, 58, 69, 22, 3],
+            "E": [45, 50, 50, 60, 50]}
 
 
 class C(BaseConstants):
@@ -40,6 +40,30 @@ class Player(BasePlayer):
 
     numbers = models.StringField(blank=True)
     var_list = models.StringField(blank=True)
+
+    def make_field(label, answer):
+        return models.IntegerField(
+            blank=False,
+            label=label,
+            widget=widgets.RadioSelect,
+            choices=[
+                [1, answer[0]],
+                [2, answer[1]],
+                [3, answer[2]],
+                [4, answer[3]]]
+        )
+
+
+    q1 = make_field(label="If the mean of a Normal distribution is 20, where would the peak of the bell curve be? ",
+                answer=['A. Above 20', 'B. Below 20', 'C. Exactly at 20', 'D. Do not know'])
+
+    q2 = make_field(label="If I randomly choose 100 numbers from a normal distribution with mean 0 and very low variance and what do you think will be the average of these numbers?",
+    answer=['A. Closee to 100',
+            'B. Close to 10',
+            'C. Close to 0',
+            'D. Do not know'])
+    q3 = make_field(label="The attributes will be picked from a Normal Distribution with mean 50 and different variances. What will be the order of decreasing variances? ",
+    answer=['A. I > II > III > IV > V', 'B. V > IV > III > II > I', 'C. It will be random', 'D. I do not know'])
 
 
 class TileClick(ExtraModel):
@@ -78,7 +102,7 @@ def table_page_live_method(player, data):
 
 class Quiz(Page):
     form_model = 'player'
-    form_fields = ['choice']
+    form_fields = ['choice', 'q1', 'q2', 'q3']
 
     @staticmethod
     def vars_for_template(player: Player):
