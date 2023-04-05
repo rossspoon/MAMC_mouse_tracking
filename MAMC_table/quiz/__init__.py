@@ -40,7 +40,7 @@ class Player(BasePlayer):
 
     numbers = models.StringField(blank=True)
     var_list = models.StringField(blank=True)
-
+    is_understand = models.BooleanField(initial=True)
     def make_field(label, answer):
         return models.IntegerField(
             blank=False,
@@ -58,7 +58,7 @@ class Player(BasePlayer):
                 answer=['A. Above 20', 'B. Below 20', 'C. Exactly at 20', 'D. Do not know'])
 
     q2 = make_field(label="If I randomly choose 100 numbers from a normal distribution with mean 0 and very low variance and what do you think will be the average of these numbers?",
-    answer=['A. Closee to 100',
+    answer=['A. Close to 100',
             'B. Close to 10',
             'C. Close to 0',
             'D. Do not know'])
@@ -136,5 +136,45 @@ class Quiz(Page):
 
     live_method = table_page_live_method
 
+    @staticmethod
+    def error_message(player: Player, values):
+        solutions = dict(choice=3, q1=3, q2=3, q3=2)
 
-page_sequence = [Quiz]
+        if values != solutions:
+            player.is_understand = False
+
+class QuizResults(Page):
+    form_model = 'player'
+    form_fields = ['choice', 'q1', 'q2', 'q3']
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        if player.field_maybe_none('start_time') == -1:
+            ts = round(time() * 1000)
+            player.start_time = ts
+
+        col_names=['Options/Attributes', 'I', 'II', 'III', 'IV', 'V']
+        numbers = get_numbers()
+        return dict(numbers=numbers,
+                    column_names=col_names,
+                    indexes=list(range(len(numbers))),
+                    form_fields=['choice'],
+                    )
+
+    @staticmethod
+    def get_messages(self):
+        player = self.player
+        ret = {}
+
+        ret['choice'] = "Option C"
+
+        ret['q1'] = "Option C"
+
+        ret['q2'] = "Option C"
+
+        ret['q3'] = "Option B"
+
+        return dict(self.get_messages())
+
+
+page_sequence = [Quiz, QuizResults]
