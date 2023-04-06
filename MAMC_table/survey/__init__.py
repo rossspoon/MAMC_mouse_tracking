@@ -54,7 +54,7 @@ class Player(BasePlayer):
     bisbas1 = models.StringField(
         widget=widgets.RadioSelectHorizontal,
         choices=["Very true for me", "Somewhat true for me", "Somewhat false for me", "Very false for me"],
-        label="Each item of this questionnaire is a statement that a person may either agree with or disagree with.  For each item, indicate how much you agree or disagree with what the item says.  Choose only one response to each statement. <br> <br>15. A person's family is the most important thing in life.", blank=True
+        label="Each following item is a statement that a person may either agree with or disagree with. For each item, indicate how much you agree or disagree with what the item says. Please respond to all the items; do not leave any blank. Choose only one response to each statement. Please be as accurate and honest as you can be. Respond to each item as if it were the only item. That is, do not worry about being 'consistent' in your responses. <br> <br>15. A person's family is the most important thing in life.", blank=True
     )
 
 
@@ -201,7 +201,7 @@ class PageInherit(Page):
 
 
 # PAGES
-class MyPage(PageInherit):
+class survey(PageInherit):
     form_model = 'player'
     form_fields = ['gender', 'age', 'race_h_l', 'race', 'college', 'job',
                    'major', 'stat_experience', 'risk', 'discount', 'goodatmath', 'mathq1', 'mathq2', 'mathq3', 'bisbas1', 'bisbas2', 'bisbas3', 'bisbas4', 'bisbas5', 'bisbas6', 'bisbas7', 'bisbas8','bisbas9', 'bisbas10',
@@ -221,4 +221,4 @@ class MyPage(PageInherit):
 'bisbas24' ]
 
 
-page_sequence = [MyPage]
+page_sequence = [survey]
