@@ -2,7 +2,7 @@
     Table of Numbers
 {{ endblock }}
 {{ block content }}
-    <link rel="stylesheet" type="text/css" href="{% static 'tablemaker/css/table-styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
     <script src="{{ static 'js/table.js' }}"></script>
 
     {{ formfield_errors 'choice' }}
