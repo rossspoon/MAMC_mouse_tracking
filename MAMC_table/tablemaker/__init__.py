@@ -5,6 +5,7 @@ from time import time
 import random
 import roman
 import json
+import os
 
 doc = """
 Test app for generating the choice table.
@@ -62,11 +63,14 @@ def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
 
     return ret_val
 
+num_rounds = os.getenv('NUM_ROUNDS')
+if not num_rounds:
+    num_rounds = 40
 
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
     PLAYERS_PER_GROUP = None
-    NUM_ROUNDS = 40
+    NUM_ROUNDS = int(num_rounds)
 
 
 class Subsession(BaseSubsession):
@@ -180,6 +184,7 @@ class Results(Page):
         tile_clicks = TileClick.filter(player=player)
         opt_clicks = OptionClick.filter(player=player)
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
+
 
 
 page_sequence = [TablePage, Results]

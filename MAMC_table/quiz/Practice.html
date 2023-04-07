@@ -1,12 +1,17 @@
 {{ block title }}
-    Table of Numbers
+    Practice
 {{ endblock }}
 {{ block content }}
     <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/global-styles.css' }}">
     <script src="{{ static 'js/table.js' }}"></script>
 
     {{ formfield_errors 'choice' }}
     <input type="hidden" name="choice" id="choice"/>
+
+    <p class="big">This is a practice round.  You will have 5 minutes to try to find
+    the option which has the attributes with the highest sum.  Select the option
+    that you think is best and click 'Next'.</p>
 
     <table class="choice-tab">
         <thead>
@@ -35,6 +40,7 @@
         {{ endfor }}
         </tbody>
     </table>
+
     {{ next_button }}
 
 {{ endblock }}
