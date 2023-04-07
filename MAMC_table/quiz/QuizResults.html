@@ -1,44 +1,20 @@
 {{ block title }}
-    Quiz Results
+    Quiz
 {{ endblock }}
 {{ block content }}
-<link rel="stylesheet" type="text/css" href="{% static 'quiztablemaker/css/table-styles.css' %}">
-    <script src="{{ static 'js/table.js' }}"></script>
-
-    {{ formfield_errors 'choice' }}
-    <input type="hidden" name="choice" id="choice"/>
-
-    <table class="choice-tab">
-        <thead>
-          <tr>
-            {% for name in column_names %}
-            <th>{{ name }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-        {{ for key, r in numbers.items() }}
-
-        <tr>
-            <td>
-                <input type="radio" class="choice-rad" name="choice" id="choice_{{ key }}" value="{{ key }}"/>
-                <label for="choice_{{ key }}">{{ key }}</label>
-            </td>
-            {{ for n in r }}
-                <td class="choice-tile">
-                    <div class="cover">
-                        <div class="n-cell"> {{ n }} </div>
-                    </div>
-                </td>
-            {{ endfor }}
-        </tr>
+    <link rel="stylesheet" type="text/css" href="{% static 'quiz/css/quiz-styles.css' %}">
+    <script src="{{ static 'quiz/js/quiz_page.js' }}"></script>
+    <ul>
+        {{ for f in form }}
+            <li id="{{ f.name }}" class="quiz-question">
+                {{ f.label }}{{ f }}
+                <div id="{{ f.name }}_err" class="form-control-errors"></div>
+                {{ formfield_errors f.name }}
+            </li>
         {{ endfor }}
-        </tbody>
-    </table>
-
-
-    {{formfields}}
+    </ul>
 
     {{ next_button }}
 
 {{ endblock }}
+

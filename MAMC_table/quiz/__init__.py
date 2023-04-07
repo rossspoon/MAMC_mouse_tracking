@@ -35,17 +35,13 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     choice = models.StringField()
-    start_time = models.IntegerField(initial=-1)
-    duration = models.IntegerField(initial=-1)
-
-    numbers = models.StringField(blank=True)
-    var_list = models.StringField(blank=True)
     is_understand = models.BooleanField(initial=True)
+
     def make_field(label, answer):
         return models.IntegerField(
-            blank=False,
+            blank=True,
             label=label,
-            widget=widgets.RadioSelect,
+            #widget=widgets.RadioSelect,
             choices=[
                 [1, answer[0]],
                 [2, answer[1]],
@@ -65,76 +61,28 @@ class Player(BasePlayer):
     q3 = make_field(label="The attributes will be picked from a Normal Distribution with mean 50 and different variances. What will be the order of decreasing variances? ",
     answer=['A. I > II > III > IV > V', 'B. V > IV > III > II > I', 'C. It will be random', 'D. I do not know'])
 
+    choice_score = models.BooleanField(blank=True)
+    q1_score = models.BooleanField(blank=True)
+    q2_score = models.BooleanField(blank=True)
+    q3_score = models.BooleanField(blank=True)
 
-class TileClick(ExtraModel):
-    player = models.Link(Player)
-    seq = models.IntegerField()
-    timestamp = models.IntegerField()
-    x = models.IntegerField()
-    y = models.IntegerField()
+# HELPER FUNCTIONS
 
+def get_messages(player: Player):
+    ret = {'q1': "" if player.q1_score else "The bell curve will peak exactly at 20.",
+           'q2': "" if player.q2_score else f'The average of 100 draws will typically be very close to the mean.  In this case, zero.',
+           'q3': "" if player.q3_score else f'The attribute (column) with the highest variance will be labeled IV.  The lowest'+
+                                            f' variance attribute will be labeled I',
+           }
+    return ret
 
-class OptionClick(ExtraModel):
-    player = models.Link(Player)
-    seq = models.IntegerField()
-    timestamp = models.IntegerField()
-    option = models.StringField()
-
-
-def table_page_live_method(player, data):
-    func = data.get('func')
-    ts = round(time() * 1000)
-    page_time = ts - player.start_time
-
-    if func == 'tile-click':
-        seq = data.get('seq')
-        x = data.get('x')
-        y = data.get('y')
-        TileClick.create(player=player, seq=seq, timestamp=page_time, x=x, y=y)
-
-    elif func == 'option-click':
-        seq = data.get('seq')
-        option = data.get('option')
-        OptionClick.create(player=player, seq=seq, timestamp=page_time, option=option)
 
 
 # PAGES
 
 class Quiz(Page):
     form_model = 'player'
-    form_fields = ['choice', 'q1', 'q2', 'q3']
-
-    @staticmethod
-    def vars_for_template(player: Player):
-        if player.field_maybe_none('start_time') == -1:
-            ts = round(time() * 1000)
-            player.start_time = ts
-
-        col_names=['Options/Attributes', 'I', 'II', 'III', 'IV', 'V']
-        numbers = get_numbers()
-        return dict(numbers=numbers,
-                    column_names=col_names,
-                    indexes=list(range(len(numbers))),
-                    form_fields=['choice'],
-                    )
-
-    @staticmethod
-    def before_next_page(player: Player, timeout_happened):
-        if timeout_happened:
-            return
-
-        ts = round(time() * 1000)
-        player.duration = ts - player.start_time
-
-    @staticmethod
-    def js_vars(player: Player):
-        # Number of clicks
-        tile_click_order = len(TileClick.filter(player=player))
-        opt_click_order = len(OptionClick.filter(player=player))
-        return dict(tile_click_order=tile_click_order,
-                    opt_click_order=opt_click_order)
-
-    live_method = table_page_live_method
+    form_fields = ['q1', 'q2', 'q3']
 
     @staticmethod
     def error_message(player: Player, values):
@@ -143,15 +91,21 @@ class Quiz(Page):
         if values != solutions:
             player.is_understand = False
 
+
+    @staticmethod
+    def before_next_page(player: Player, timeout_happened):
+        # Grade the quiz
+        player.q1_score = player.field_maybe_none('q1') == 3
+        player.q2_score = player.field_maybe_none('q2') == 3
+        player.q3_score = player.field_maybe_none('q3') == 2
+
+
 class QuizResults(Page):
     form_model = 'player'
-    form_fields = ['choice', 'q1', 'q2', 'q3']
+    form_fields = ['q1', 'q2', 'q3']
 
     @staticmethod
     def vars_for_template(player: Player):
-        if player.field_maybe_none('start_time') == -1:
-            ts = round(time() * 1000)
-            player.start_time = ts
 
         col_names=['Options/Attributes', 'I', 'II', 'III', 'IV', 'V']
         numbers = get_numbers()
@@ -161,20 +115,49 @@ class QuizResults(Page):
                     form_fields=['choice'],
                     )
 
+
     @staticmethod
-    def get_messages(self):
-        player = self.player
-        ret = {}
+    def js_vars(player: Player):
+        success = False
 
-        ret['choice'] = "Option C"
+        fields_to_check = {f: f"{f}_score" for f in ['q1', 'q2', 'q3']}
+        scored = {f: bool(player.field_maybe_none(s)) for f, s in fields_to_check.items()}
+        question_class = {n: 'correct' if b else 'wrong' for n, b in scored.items()}
 
-        ret['q1'] = "Option C"
-
-        ret['q2'] = "Option C"
-
-        ret['q3'] = "Option B"
-
-        return dict(self.get_messages())
+        # This variable will signal the js to turn the error message green.
+        success = all(scored.values())
 
 
-page_sequence = [Quiz, QuizResults]
+        return {'q_class': question_class,
+                'success': success,
+                'errors': get_messages(player)}
+
+
+class Practice(Page):
+    form_model = 'player'
+    form_fields = ['choice']
+    timeout_seconds = 300
+
+    @staticmethod
+    def vars_for_template(player: Player):
+        col_names = ['Options/Attributes', 'I', 'II', 'III', 'IV', 'V']
+        numbers = get_numbers()
+        return dict(numbers=numbers,
+                    column_names=col_names,
+                    indexes=list(range(len(numbers))),
+                    form_fields=['choice'],
+                    )
+
+
+class PracticeResults(Page):
+    @staticmethod
+    def vars_for_template(player: Player):
+        totals = {key: sum(n) for key, n in get_numbers().items()}
+        correct = player.field_maybe_none('choice') == 'C'
+        return dict(totals=totals, correct=correct)
+
+    @staticmethod
+    def js_vars(player: Player):
+        return dict(choice=player.field_maybe_none('choice'))
+
+page_sequence = [Quiz, QuizResults, Practice, PracticeResults]
