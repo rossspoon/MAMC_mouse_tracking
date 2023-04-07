@@ -12,9 +12,9 @@ def get_numbers():
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-    return {"A": [50, 40, 30, 20, 100],
+    return {"A": [50, 40, 30, 20, 90],
             "B": [52, 62, 35, 58, 8],
-            "C": [48, 50, 61, 91, 90],
+            "C": [48, 50, 61, 91, 100],
             "D": [51, 58, 69, 22, 3],
             "E": [45, 50, 50, 60, 50]}
 
@@ -55,7 +55,7 @@ class Player(BasePlayer):
 
 
     q1 = make_field(label="If the mean of a Normal distribution is 20, where would the peak of the bell curve be? ",
-                answer=['A. Above 20', 'B. Below 20', 'C. Exactly at 20', 'D. Do not know'])
+                answer=['A. Above 20', 'B. Below 20', 'C. Exactly at 20 ', 'D. Do not know'])
 
     q2 = make_field(label="If I randomly choose 100 numbers from a normal distribution with mean 0 and very low variance and what do you think will be the average of these numbers?",
     answer=['A. Close to 100',

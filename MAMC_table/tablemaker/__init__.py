@@ -10,7 +10,7 @@ doc = """
 Test app for generating the choice table.
 """
 
-VAR_LIST = [10, 100, 200, 300, 400]
+VAR_LIST = [10, 100, 200, 300, 600]
 
 def get_attr_values(v, n):
     return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
