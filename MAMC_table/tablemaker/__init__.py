@@ -197,6 +197,8 @@ class TablePage(Page):
             return "Please select and option"
 
 class Results(Page):
+    timeout_seconds = 15
+
     @staticmethod
     def vars_for_template(player: Player):
         tile_clicks = TileClick.filter(player=player)
