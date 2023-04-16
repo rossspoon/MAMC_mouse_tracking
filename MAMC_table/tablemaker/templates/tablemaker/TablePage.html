@@ -3,6 +3,7 @@
 {{ endblock }}
 {{ block content }}
     <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/global-styles.css' }}">
     <script src="{{ static 'js/table.js' }}"></script>
 
     {{ formfield_errors 'choice' }}
@@ -35,6 +36,8 @@
         {{ endfor }}
         </tbody>
     </table>
-    {{ next_button }}
+    <div class="button-row">
+        {{ next_button }}
+    </div>
 
 {{ endblock }}

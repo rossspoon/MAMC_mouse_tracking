@@ -3,24 +3,18 @@
 {{ endblock }}
 
 {{ block content }}
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/global-styles.css' }}">
 
-    <div style="font-size: 20px;">You selected <em>{{ player.choice }}</em></div>
-    <div> Time to select: {{ player.duration }}</div>
+    {{ if player.field_maybe_none('choice') }}
+        <div class="big">You selected option: <em>{{ player.choice }}</em></div>
+        <div class="big">The value of your choice was: <em>{{ player.choice_value }}</em> </div>
+    {{ else }}
+        <div class="big"> You did not make a choice in time this round. </div>
+    {{ endif }}
 
-    <h1> You clicked on  (col, row):</h1>
-    <ul>
-        {{ for click in tile_clicks }}
-            <li>{{ click.seq }}:  ( {{ click.x }}, {{click.y }}) ts: {{ click.timestamp }}</li>
-        {{ endfor }}
-    </ul>
-
-    <h1> Option Selection</h1>
-    <ul>
-        {{ for click in opt_clicks }}
-             <li>{{ click.seq }}:  {{ click.option }} ts: {{ click.timestamp }}</li>
-       {{ endfor }}
-    </ul>
+    <div class="button-row">
     {{ next_button }}
+    </div>
 {{ endblock }}
 
 
