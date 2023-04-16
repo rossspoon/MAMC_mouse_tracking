@@ -82,12 +82,15 @@ class Group(BaseGroup):
 
 
 class Player(BasePlayer):
-    choice = models.StringField()
+    choice = models.StringField(blank=True)
+    choice_value = models.IntegerField(blank=True)
     start_time = models.IntegerField(initial=-1)
     duration = models.IntegerField(initial=-1)
 
     numbers = models.StringField(blank=True)
     var_list = models.StringField(blank=True)
+
+
 
 
 class TileClick(ExtraModel):
@@ -165,8 +168,17 @@ class TablePage(Page):
         if timeout_happened:
             return
 
+        # Record Duration - Time to click
         ts = round(time() * 1000)
         player.duration = ts - player.start_time
+
+        # Tabulate the value of the choice
+        numbers = json.loads(player.numbers)
+        choice = player.field_maybe_none('choice')
+        if choice:
+            player.choice_value = sum(numbers[choice])
+
+
 
     @staticmethod
     def js_vars(player: Player):
@@ -177,6 +189,12 @@ class TablePage(Page):
                     opt_click_order=opt_click_order)
 
     live_method = table_page_live_method
+
+    @staticmethod
+    def error_message(player, values):
+        c = values['choice']
+        if not c:
+            return "Please select and option"
 
 class Results(Page):
     @staticmethod
