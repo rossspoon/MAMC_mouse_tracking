@@ -71,8 +71,8 @@ class Player(BasePlayer):
 def get_messages(player: Player):
     ret = {'q1': "" if player.q1_score else "The bell curve will peak exactly at 20.",
            'q2': "" if player.q2_score else f'The average of 100 draws will typically be very close to the mean.  In this case, zero.',
-           'q3': "" if player.q3_score else f'The attribute (column) with the highest variance will be labeled IV.  The lowest'+
-                                            f' variance attribute will be labeled I',
+           'q3': "" if player.q3_score else f'The attribute (column) with the highest variance will be labeled I.  The lowest'+
+                                            f' variance attribute will be labeled V.',
            }
     return ret
 
@@ -97,7 +97,7 @@ class Quiz(Page):
         # Grade the quiz
         player.q1_score = player.field_maybe_none('q1') == 3
         player.q2_score = player.field_maybe_none('q2') == 3
-        player.q3_score = player.field_maybe_none('q3') == 2
+        player.q3_score = player.field_maybe_none('q3') == 1
 
 
 class QuizResults(Page):

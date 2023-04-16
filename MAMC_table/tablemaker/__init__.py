@@ -23,7 +23,7 @@ def sample_var_list(variances=VAR_LIST):
 
 
 def get_col_names(variances=VAR_LIST):
-    var_dict = {v: roman.toRoman(i) for i, v in enumerate(sorted(variances), start=1)}
+    var_dict = {v: roman.toRoman(i) for i, v in enumerate(reversed(sorted(variances)), start=1)}
     col_names = ["Options/Attributes"] + [var_dict[v] for v in variances]
     return col_names
 
