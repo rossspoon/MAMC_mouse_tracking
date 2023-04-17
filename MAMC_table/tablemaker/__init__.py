@@ -13,6 +13,15 @@ Test app for generating the choice table.
 
 VAR_LIST = [10, 100, 200, 300, 600]
 
+# Assign treatments.  This is based off
+# of the id_in_group value of the player.
+# Even ids are not control and odds are.
+def creating_session(subsession):
+    for p in subsession.get_players():
+        is_control = p.id_in_group % 2
+        p.is_control = is_control
+
+
 def get_attr_values(v, n):
     return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
 
@@ -86,11 +95,10 @@ class Player(BasePlayer):
     choice_value = models.IntegerField(blank=True)
     start_time = models.IntegerField(initial=-1)
     duration = models.IntegerField(initial=-1)
+    is_control = models.BooleanField(initial=False)
 
     numbers = models.StringField(blank=True)
     var_list = models.StringField(blank=True)
-
-
 
 
 class TileClick(ExtraModel):
@@ -153,7 +161,12 @@ class TablePage(Page):
         if var_list_raw:
             var_list = json.loads(var_list_raw)
         else:
-            var_list = sample_var_list()
+            # Here we generate the column list for the player
+            # control players do not get a scrambled list.
+            if player.is_control:
+                var_list = VAR_LIST
+            else:
+                var_list = sample_var_list()
             player.var_list = json.dumps(var_list)
 
         # retrieve number grid or create a new one
