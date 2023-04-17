@@ -27,10 +27,6 @@ dict(name='tablemaker',
      app_sequence=['tablemaker'],
      num_demo_participants=1),
 
-dict(name='tablemakercontrol',
-     app_sequence=['tablemakercontrol'],
-     num_demo_participants=1),
-
 dict(name='survey',
      app_sequence=['survey'],
      num_demo_participants=1)
