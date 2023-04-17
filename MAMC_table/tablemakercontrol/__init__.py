@@ -11,21 +11,17 @@ doc = """
 Test app for generating the choice table.
 """
 
-VAR_LIST = [10, 100, 200, 300, 600]
+VAR_LIST = [600, 300, 200, 100, 10]
 
 def get_attr_values(v, n):
-    return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
+   return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
 
 
-def sample_var_list(variances=VAR_LIST):
-    va = random.sample(variances, 5)
-    return va
+#def sample_var_list(variances=VAR_LIST):
+    #va = random.sample(variances, 5)
+    #return va
 
-
-def get_col_names(variances=VAR_LIST):
-    var_dict = {v: roman.toRoman(i) for i, v in enumerate(reversed(sorted(variances)), start=1)}
-    col_names = ["Options/Attributes"] + [var_dict[v] for v in variances]
-    return col_names
+col_names = ['I', 'II', 'III', 'IV', 'V']
 
 
 def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
@@ -68,7 +64,7 @@ if not num_rounds:
     num_rounds = 40
 
 class C(BaseConstants):
-    NAME_IN_URL = 'tablemaker'
+    NAME_IN_URL = 'tablemakercontrol'
     PLAYERS_PER_GROUP = None
     NUM_ROUNDS = int(num_rounds)
 
@@ -125,19 +121,9 @@ def table_page_live_method(player, data):
         OptionClick.create(player=player, seq=seq, timestamp=page_time, option=option)
 
 
-
-def get_payout(player):
-    players = player.in_all_rounds()
-    values = [p.field_maybe_none('choice_value') for p in players if p.field_maybe_none('choice_value')]
-
-    if len(values) == 0:
-        return None
-
-    return random.choice(values)
-
 # PAGES
 
-class TablePage(Page):
+class tablepagecontrol(Page):
     form_model = 'player'
     form_fields = ['choice']
     timeout_seconds = 15
@@ -153,7 +139,7 @@ class TablePage(Page):
         if var_list_raw:
             var_list = json.loads(var_list_raw)
         else:
-            var_list = sample_var_list()
+            var_list = VAR_LIST
             player.var_list = json.dumps(var_list)
 
         # retrieve number grid or create a new one
@@ -165,7 +151,7 @@ class TablePage(Page):
             player.numbers = json.dumps(numbers)
 
         # generate col_names from the var_list
-        col_names = get_col_names(variances=var_list)
+        col_names =  ['Options/Attributes','I', 'II', 'III', 'IV', 'V']
 
         return dict(numbers=numbers,
                     column_names=col_names,
@@ -175,14 +161,6 @@ class TablePage(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
-
-        # calculate payout
-        if player.round_number == C.NUM_ROUNDS:
-            payout = get_payout(player)
-            if payout:
-                player.participant.payoff = payout
-
-        # if timeout, nothing else to do
         if timeout_happened:
             return
 
@@ -195,6 +173,8 @@ class TablePage(Page):
         choice = player.field_maybe_none('choice')
         if choice:
             player.choice_value = sum(numbers[choice])
+
+
 
     @staticmethod
     def js_vars(player: Player):
@@ -212,10 +192,7 @@ class TablePage(Page):
         if not c:
             return "Please select and option"
 
-
 class Results(Page):
-    timeout_seconds = 15
-
     @staticmethod
     def vars_for_template(player: Player):
         tile_clicks = TileClick.filter(player=player)
@@ -224,4 +201,4 @@ class Results(Page):
 
 
 
-page_sequence = [TablePage, Results]
+page_sequence = [tablepagecontrol, Results]
