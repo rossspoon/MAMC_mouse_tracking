@@ -12,11 +12,11 @@ def get_numbers():
     :return:  The return object is a dict where the key is the label and
                 the value is a list of numbers for that table row.
     """
-    return {"A": [50, 40, 30, 20, 90],
-            "B": [52, 62, 35, 58, 8],
-            "C": [48, 50, 61, 91, 100],
-            "D": [51, 58, 69, 22, 3],
-            "E": [45, 50, 50, 60, 50]}
+    return {"A": [90, 20, 30, 40, 50],
+            "B": [8, 58, 35, 62, 52],
+            "C": [100, 91, 61, 50, 48],
+            "D": [3, 22, 69, 58, 51],
+            "E": [50, 60, 50, 50, 45]}
 
 
 class C(BaseConstants):
