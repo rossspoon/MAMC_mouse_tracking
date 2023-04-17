@@ -11,7 +11,7 @@ doc = """
 Test app for generating the choice table.
 """
 
-VAR_LIST = [10, 100, 200, 300, 600]
+VAR_LIST = [600, 300, 200, 100, 10]
 
 # Assign treatments.  This is based off
 # of the id_in_group value of the player.
