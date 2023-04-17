@@ -125,6 +125,16 @@ def table_page_live_method(player, data):
         OptionClick.create(player=player, seq=seq, timestamp=page_time, option=option)
 
 
+
+def get_payout(player):
+    players = player.in_all_rounds()
+    values = [p.field_maybe_none('choice_value') for p in players if p.field_maybe_none('choice_value')]
+
+    if len(values) == 0:
+        return None
+
+    return random.choice(values)
+
 # PAGES
 
 class TablePage(Page):
@@ -165,6 +175,14 @@ class TablePage(Page):
 
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
+
+        # calculate payout
+        if player.round_number == C.NUM_ROUNDS:
+            payout = get_payout(player)
+            if payout:
+                player.participant.payoff = payout
+
+        # if timeout, nothing else to do
         if timeout_happened:
             return
 
@@ -177,8 +195,6 @@ class TablePage(Page):
         choice = player.field_maybe_none('choice')
         if choice:
             player.choice_value = sum(numbers[choice])
-
-
 
     @staticmethod
     def js_vars(player: Player):
@@ -195,6 +211,7 @@ class TablePage(Page):
         c = values['choice']
         if not c:
             return "Please select and option"
+
 
 class Results(Page):
     timeout_seconds = 15
