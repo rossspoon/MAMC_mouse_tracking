@@ -25,7 +25,10 @@ class Player(BasePlayer):
 
 
 # PAGES
-class Instructions(Page):
+class Instructionspg0(Page):
+    pass
+
+class Instructionspg1(Page):
     pass
 
 class Instructionspg2(Page):
@@ -36,4 +39,4 @@ class Instructionspg3(Page):
 
 
 
-page_sequence = [Instructions, Instructionspg2, Instructionspg3]
+page_sequence = [Instructionspg0, Instructionspg1, Instructionspg2, Instructionspg3]
