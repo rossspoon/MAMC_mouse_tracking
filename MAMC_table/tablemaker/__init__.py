@@ -74,7 +74,7 @@ def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
 
 num_rounds = os.getenv('NUM_ROUNDS')
 if not num_rounds:
-    num_rounds = 40
+    num_rounds = 20
 
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
@@ -141,7 +141,7 @@ def get_payout(player):
     if len(values) == 0:
         return None
 
-    return random.choice(values)
+    return random.choice(values)//100
 
 # PAGES
 
