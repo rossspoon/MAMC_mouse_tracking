@@ -231,9 +231,15 @@ class PaymentPage(Page):
     @staticmethod
     def vars_for_template(player: Player):
         participant = player.participant
-        labels = participant.vars['BONUS_LABELS']
-        numbers_raw = participant.vars['BONUS_NUMBERS']
-        round_number = participant.vars['BONUS_ROUND']
+        try:
+            labels = participant.vars['BONUS_LABELS']
+            numbers_raw = participant.vars['BONUS_NUMBERS']
+            round_number = participant.vars['BONUS_ROUND']
+        except:
+            labels=None
+            numbers_raw=None
+            round_number=None
+
         numbers = None
         show_table = False
 
@@ -267,7 +273,11 @@ class PaymentPage(Page):
 
     @staticmethod
     def js_vars(player: Player):
-        c =  player.participant.vars['BONUS_CHOICE']
+        try:
+            c =  player.participant.vars['BONUS_CHOICE']
+        except:
+            c='na'
+
         return dict(c=c)
 
 
