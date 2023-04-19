@@ -243,6 +243,11 @@ class Results(Page):
         opt_clicks = OptionClick.filter(player=player)
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
+class IntroPage(Page):
+    timeout_seconds = 30
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
 
-page_sequence = [TablePage, Results]
+page_sequence = [IntroPage, TablePage, Results]
