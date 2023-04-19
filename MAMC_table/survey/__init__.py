@@ -1,3 +1,5 @@
+import json
+
 from otree.api import *
 
 doc = """
@@ -196,17 +198,13 @@ class Player(BasePlayer):
     )
 
 
-class PageInherit(Page):
-    form_model = 'player'
-
-
 # PAGES
-class survey1(PageInherit):
+class survey1(Page):
     form_model = 'player'
     form_fields = ['gender', 'age', 'race_h_l', 'race', 'college', 'job',
                    'major', 'stat_experience', 'risk', 'discount', 'goodatmath', 'mathq1', 'mathq2', 'mathq3']
 
-class survey2(PageInherit):
+class survey2(Page):
     form_model = 'player'
     form_fields = ['bisbas1', 'bisbas2', 'bisbas3', 'bisbas4', 'bisbas5', 'bisbas6', 'bisbas7', 'bisbas8','bisbas9', 'bisbas10',
                        'bisbas11',
@@ -224,7 +222,53 @@ class survey2(PageInherit):
                        'bisbas23',
                        'bisbas24']
 
+
 class finalpage(Page):
     pass
 
-page_sequence = [survey1, survey2, finalpage]
+
+class PaymentPage(Page):
+    @staticmethod
+    def vars_for_template(player: Player):
+        participant = player.participant
+        labels = participant.vars['BONUS_LABELS']
+        numbers_raw = participant.vars['BONUS_NUMBERS']
+        round_number = participant.vars['BONUS_ROUND']
+        numbers = None
+        show_table = False
+
+
+        if numbers_raw and labels:
+            show_table = True
+            numbers = json.loads(numbers_raw)
+
+            #copy labels to prevent contaminating the original
+            labels = labels.copy()
+            labels.append('Total')
+
+            # Add the totals to the end of the rows
+            for k, v in numbers.items():
+                total = sum(v)
+                v.append(total)
+
+
+        # get the bonus payment
+        session = player.session
+        bonus = participant.payoff.to_real_world_currency(session)
+
+        return dict(
+            numbers = numbers,
+            column_names = labels,
+            bonus = bonus,
+            showup = player.session.config['participation_fee'],
+            show_table = show_table,
+            r = round_number,
+        )
+
+    @staticmethod
+    def js_vars(player: Player):
+        c =  player.participant.vars['BONUS_CHOICE']
+        return dict(c=c)
+
+
+page_sequence = [survey1, survey2, PaymentPage]

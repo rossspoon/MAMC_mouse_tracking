@@ -1,0 +1,87 @@
+{{ block title }}
+   Payment
+{{ endblock }}
+{{ block content }}
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
+    <link rel="stylesheet" type="text/css" href="{{ static 'css/global-styles.css' }}">
+    <style>
+        .pay-tab {
+            width: 60%;
+            margin: 25px;
+        }
+        .pay-tab th {
+            border-bottom: black 2pt double;
+        }
+
+        .selected {
+            background-color: #eeffee;
+        }
+        .selected td:last-child div{
+            border: green 3px solid;
+            border-radius: 5px;
+        }
+    </style>
+
+    <script>
+        $(window).on('load', function () {
+            let c = js_vars.c;
+            $('#choice_' + c).prop("checked", true);
+            console.log('#choice_'+c)
+
+            $('#choice_'+c).parents('tr').addClass('selected')
+        });
+    </script>
+
+    <div class="big">
+        Thank you for participating.  Your final payment is
+        <b>{{ participant.payoff_plus_participation_fee() }}</b>.
+
+        <table class="pay-tab">
+            <tr><th>Participation</th>
+                <th>Bonus</th>
+                <th>Total</th>
+            </tr>
+            <tr>
+                <td>{{ showup }}</td>
+                <td>{{ bonus }}</td>
+                <td>{{ participant.payoff_plus_participation_fee() }}</td>
+            </tr>
+        </table>
+    </div>
+
+    {{ if show_table }}
+    <div class="big">
+        You bonus payment was based on your choice from round <b>{{ r }}</b>
+    </div>
+    <table class="choice-tab">
+        <thead>
+          <tr>
+            {{ for name in column_names }}
+            <th>{{ name }}</th>
+            {{ endfor }}
+          </tr>
+        </thead>
+        <tbody>
+        {{ for key, r in numbers.items() }}
+
+        <tr>
+            <td>
+                <input type="radio" class="choice-rad" name="choice" id="choice_{{ key }}" value="{{ key }}" disabled/>
+                <label for="choice_{{ key }}">{{ key }}</label>
+            </td>
+            {{ for n in r }}
+                <td class="choice-tile">
+                    <div class="tab-content">
+                        <div> {{ n }} </div>
+                    </div>
+                </td>
+            {{ endfor }}
+        </tr>
+        {{ endfor }}
+        </tbody>
+    </table>
+    {{ else }}
+        <div class="big">You did not receive a bonus payment because you did
+            not make any choices in this experiment.</div>
+    {{ endif}}
+{{ endblock}}
