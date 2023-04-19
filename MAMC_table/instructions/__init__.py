@@ -37,6 +37,9 @@ class Instructionspg2(Page):
 class Instructionspg3(Page):
     pass
 
+class Instructionspg4(Page):
+    pass
 
 
-page_sequence = [Instructionspg0, Instructionspg1, Instructionspg2, Instructionspg3]
+
+page_sequence = [Instructionspg0, Instructionspg1, Instructionspg2, Instructionspg3, Instructionspg4]
