@@ -21,10 +21,10 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 
-    gender = models.StringField(choices=['Female', 'Male', 'Other'], widget=widgets.RadioSelect, label="1. What is your gender?", blank=True)
+    gender = models.StringField(choices=['Female', 'Male', 'Other'], widget=widgets.RadioSelectHorizontal, label="1. What is your gender?", blank=True)
     age = models.IntegerField(min=18, max=100, label="2. What is your age?", blank=True)
-    race_h_l = models.StringField(choices=['Yes', 'No'], widget=widgets.RadioSelect, label="3. Are you Hispanic or Latino?", blank=True)
-    race = models.StringField(choices=['American Indian or Alaska Native', 'Asian', 'Black or African American', 'Native Hawaiian or Other Pacific Islander', 'White', 'Caucasian', 'Other', 'Prefer not to say'], widget=widgets.RadioSelect, label="4. How would you describe yourself?", blank=True)
+    race_h_l = models.StringField(choices=['Yes', 'No'], widget=widgets.RadioSelectHorizontal, label="3. Are you Hispanic or Latino?", blank=True)
+    race = models.StringField(choices=['American Indian or Alaska Native', 'Asian', 'Black or African American', 'Native Hawaiian or Other Pacific Islander', 'White', 'Caucasian', 'Other', 'Prefer not to say'], widget=widgets.RadioSelectHorizontal, label="4. How would you describe yourself?", blank=True)
     college = models.IntegerField(label="5. How many years have you been at university/college?", blank=True)
     job = models.StringField(
         choices=["work at a full-time job?", "work at a part time job?", "not have a job?"], widget=widgets.RadioSelect, label="6. Do you", blank=True)
@@ -54,7 +54,7 @@ class Player(BasePlayer):
     bisbas1 = models.StringField(
         widget=widgets.RadioSelectHorizontal,
         choices=["Very true for me", "Somewhat true for me", "Somewhat false for me", "Very false for me"],
-        label="Each following item is a statement that a person may either agree with or disagree with. For each item, indicate how much you agree or disagree with what the item says. Please respond to all the items; do not leave any blank. Choose only one response to each statement. Please be as accurate and honest as you can be. Respond to each item as if it were the only item. That is, do not worry about being 'consistent' in your responses. <br> <br>15. A person's family is the most important thing in life.", blank=True
+        label="15. A person's family is the most important thing in life.", blank=True
     )
 
 
@@ -201,24 +201,30 @@ class PageInherit(Page):
 
 
 # PAGES
-class survey(PageInherit):
+class survey1(PageInherit):
     form_model = 'player'
     form_fields = ['gender', 'age', 'race_h_l', 'race', 'college', 'job',
-                   'major', 'stat_experience', 'risk', 'discount', 'goodatmath', 'mathq1', 'mathq2', 'mathq3', 'bisbas1', 'bisbas2', 'bisbas3', 'bisbas4', 'bisbas5', 'bisbas6', 'bisbas7', 'bisbas8','bisbas9', 'bisbas10',
-'bisbas11',
-'bisbas12',
-'bisbas13',
-'bisbas14',
-'bisbas15',
-'bisbas16',
-'bisbas17',
-'bisbas18',
-'bisbas19',
-'bisbas20',
-'bisbas21',
-'bisbas22',
-'bisbas23',
-'bisbas24' ]
+                   'major', 'stat_experience', 'risk', 'discount', 'goodatmath', 'mathq1', 'mathq2', 'mathq3']
 
+class survey2(PageInherit):
+    form_model = 'player'
+    form_fields = ['bisbas1', 'bisbas2', 'bisbas3', 'bisbas4', 'bisbas5', 'bisbas6', 'bisbas7', 'bisbas8','bisbas9', 'bisbas10',
+                       'bisbas11',
+                       'bisbas12',
+                       'bisbas13',
+                       'bisbas14',
+                       'bisbas15',
+                       'bisbas16',
+                       'bisbas17',
+                       'bisbas18',
+                       'bisbas19',
+                       'bisbas20',
+                       'bisbas21',
+                       'bisbas22',
+                       'bisbas23',
+                       'bisbas24']
 
-page_sequence = [survey]
+class finalpage(Page):
+    pass
+
+page_sequence = [survey1, survey2, finalpage]
