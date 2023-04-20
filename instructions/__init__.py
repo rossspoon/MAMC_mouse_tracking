@@ -1,5 +1,5 @@
 from otree.api import *
-
+import tablemaker
 
 doc = """
 Your app description
@@ -26,7 +26,9 @@ class Player(BasePlayer):
 
 # PAGES
 class Instructionspg0(Page):
-    pass
+    @staticmethod
+    def vars_for_template(player: Player):
+        return dict(num_rounds = tablemaker.C.NUM_ROUNDS)
 
 class Instructionspg1(Page):
     pass
