@@ -118,8 +118,14 @@ class OptionClick(ExtraModel):
 def table_page_live_method(player, data):
     func = data.get('func')
     ts = round(time() * 1000)
-    start_time = int(player.start_time)
-    page_time = ts - start_time
+
+    # inexplicable exception getting thrown here.
+    # catching it and using a safe default.
+    try:
+        start_time = int(player.start_time)
+        page_time = ts - start_time
+    except TypeError:
+        page_time = -1
 
     if func == 'tile-click':
         seq = data.get('seq')
