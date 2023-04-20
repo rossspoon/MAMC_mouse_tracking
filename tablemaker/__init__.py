@@ -93,7 +93,7 @@ class Player(BasePlayer):
     choice = models.StringField(blank=True)
     choice_value = models.IntegerField(initial=0)
     start_time = models.StringField()
-    duration = models.IntegerField(initial=-10000)
+    duration = models.IntegerField(initial=-1)
     is_control = models.BooleanField(initial=False)
 
     numbers = models.StringField(blank=True)
