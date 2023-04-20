@@ -92,7 +92,7 @@ class Group(BaseGroup):
 class Player(BasePlayer):
     choice = models.StringField(blank=True)
     choice_value = models.IntegerField(initial=0)
-    start_time = models.IntegerField(initial=-1)
+    start_time = models.StringField()
     duration = models.IntegerField(initial=-1)
     is_control = models.BooleanField(initial=False)
 
@@ -118,7 +118,8 @@ class OptionClick(ExtraModel):
 def table_page_live_method(player, data):
     func = data.get('func')
     ts = round(time() * 1000)
-    page_time = ts - player.start_time
+    start_time = int(player.start_time)
+    page_time = ts - start_time
 
     if func == 'tile-click':
         seq = data.get('seq')
@@ -151,9 +152,9 @@ class TablePage(Page):
 
     @staticmethod
     def vars_for_template(player: Player):
-        if player.field_maybe_none('start_time') == -1:
+        if player.field_maybe_none('start_time') is None:
             ts = round(time() * 1000)
-            player.start_time = ts
+            player.start_time = str(ts)
 
         # retrieve the var_list or create a new one
         var_list_raw = player.field_maybe_none('var_list')
@@ -192,7 +193,8 @@ class TablePage(Page):
         if not timeout_happened:
             # Record Duration - Time to click
             ts = round(time() * 1000)
-            player.duration = ts - player.start_time
+            start_time = int(player.start_time)
+            player.duration = ts - start_time
 
             # Tabulate the value of the choice
             numbers = json.loads(player.numbers)
