@@ -191,7 +191,7 @@ class TablePage(Page):
         # if timeout, nothing else to do
         if not timeout_happened:
             # Record Duration - Time to click
-            ts = round(time() * 1)
+            ts = round(time() * 1000)
             start_time = int(player.start_time)
             player.duration = ts - start_time
 
