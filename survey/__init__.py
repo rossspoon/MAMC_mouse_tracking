@@ -197,6 +197,8 @@ class Player(BasePlayer):
         label="38. I worry about making mistakes.", blank=True
     )
 
+    bonus_round = models.IntegerField(initial=-1)
+
 
 # PAGES
 class survey1(Page):
@@ -235,6 +237,9 @@ class PaymentPage(Page):
             labels = participant.vars['BONUS_LABELS']
             numbers_raw = participant.vars['BONUS_NUMBERS']
             round_number = participant.vars['BONUS_ROUND']
+
+            # Set the bonus round on the player
+            player.bonus_round = int(round_number)
         except:
             labels=None
             numbers_raw=None
