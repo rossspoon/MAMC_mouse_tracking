@@ -117,8 +117,8 @@ class OptionClick(ExtraModel):
 
 def table_page_live_method(player, data):
     func = data.get('func')
-    ts = round(time() * 1000)
-    start_time = str(player.start_time)
+    ts = round(time() * 1)
+    start_time = int(player.start_time)
     page_time = ts - start_time
 
     if func == 'tile-click':
@@ -193,7 +193,7 @@ class TablePage(Page):
         if not timeout_happened:
             # Record Duration - Time to click
             ts = round(time() * 1000)
-            start_time = str(player.start_time)
+            start_time = int(player.start_time)
             player.duration = ts - start_time
 
             # Tabulate the value of the choice
