@@ -1,4 +1,3 @@
-import statsmodels.sandbox.distributions.extras
 from otree.api import *
 import numpy as np
 from time import time
@@ -74,7 +73,7 @@ def get_numbers(labels=["A", "B", "C", "D", "E"], variances=VAR_LIST):
 
 num_rounds = os.getenv('NUM_ROUNDS')
 if not num_rounds:
-    num_rounds = 20
+    num_rounds = 40
 
 class C(BaseConstants):
     NAME_IN_URL = 'tablemaker'
@@ -92,7 +91,7 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
     choice = models.StringField(blank=True)
-    choice_value = models.IntegerField(blank=True)
+    choice_value = models.IntegerField(initial=0)
     start_time = models.IntegerField(initial=-1)
     duration = models.IntegerField(initial=-1)
     is_control = models.BooleanField(initial=False)
@@ -134,14 +133,14 @@ def table_page_live_method(player, data):
 
 
 
-def get_payout(player):
-    players = player.in_all_rounds()
-    values = [p.field_maybe_none('choice_value') for p in players if p.field_maybe_none('choice_value')]
-
-    if len(values) == 0:
+def select_random_round(player):
+    all_rounds = player.in_all_rounds()
+    players = [p for p in all_rounds if p.choice_value]
+    if len(players) == 0:
         return None
 
-    return random.choice(values)//100
+    selected_player = random.choice(players)
+    return player
 
 # PAGES
 
@@ -189,25 +188,34 @@ class TablePage(Page):
     @staticmethod
     def before_next_page(player: Player, timeout_happened):
 
+        # if timeout, nothing else to do
+        if not timeout_happened:
+            # Record Duration - Time to click
+            ts = round(time() * 1000)
+            player.duration = ts - player.start_time
+
+            # Tabulate the value of the choice
+            numbers = json.loads(player.numbers)
+            choice = player.field_maybe_none('choice')
+            if choice:
+                player.choice_value = sum(numbers[choice])
+
         # calculate payout
         if player.round_number == C.NUM_ROUNDS:
-            payout = get_payout(player)
-            if payout:
-                player.participant.payoff = payout
+            random_p = select_random_round(player)
+            if random_p:
+                participant = player.participant
+                participant.payoff = random_p.choice_value
+                participant.BONUS_ROUND = random_p.field_maybe_none('round_number')
+                participant.BONUS_NUMBERS = random_p.field_maybe_none('numbers')
+                labels_raw = random_p.field_maybe_none('var_list')
+                if labels_raw:
+                    labels = get_col_names(variances=json.loads(labels_raw))
+                    participant.BONUS_LABELS = labels
+                participant.BONUS_CHOICE = random_p.field_maybe_none('choice')
+            else:
+               player.participant.payoff = 0
 
-        # if timeout, nothing else to do
-        if timeout_happened:
-            return
-
-        # Record Duration - Time to click
-        ts = round(time() * 1000)
-        player.duration = ts - player.start_time
-
-        # Tabulate the value of the choice
-        numbers = json.loads(player.numbers)
-        choice = player.field_maybe_none('choice')
-        if choice:
-            player.choice_value = sum(numbers[choice])
 
     @staticmethod
     def js_vars(player: Player):
@@ -235,6 +243,11 @@ class Results(Page):
         opt_clicks = OptionClick.filter(player=player)
         return dict(tile_clicks=tile_clicks, opt_clicks=opt_clicks)
 
+class IntroPage(Page):
+    timeout_seconds = 30
 
+    @staticmethod
+    def is_displayed(player: Player):
+        return player.round_number == 1
 
-page_sequence = [TablePage, Results]
+page_sequence = [IntroPage, TablePage, Results]

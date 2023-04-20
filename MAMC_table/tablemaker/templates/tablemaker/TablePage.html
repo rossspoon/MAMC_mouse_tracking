@@ -1,5 +1,5 @@
 {{ block title }}
-    Select the best option.
+    Select the best option.    (Round {{ player.round_number }})
 {{ endblock }}
 {{ block content }}
     <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
@@ -12,9 +12,9 @@
     <table class="choice-tab">
         <thead>
           <tr>
-            {% for name in column_names %}
+            {{ for name in column_names }}
             <th>{{ name }}</th>
-            {% endfor %}
+            {{ endfor }}
           </tr>
         </thead>
         <tbody>
