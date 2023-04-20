@@ -252,4 +252,27 @@ class IntroPage(Page):
     def is_displayed(player: Player):
         return player.round_number == 1
 
+def custom_export(players):
+    # header row
+    yield ['session', 'participant_code', 'round_number',
+           'type', 'time', 'seq', 'x', 'y', 'option']
+
+    for p in players:
+        participant = p.participant
+        session = p.session
+
+        for tc in TileClick.filter(player=p):
+            ts = tc.timestamp
+            x = tc.x
+            y = tc.y
+            yield [session.code, participant.code, p.round_number,
+                    'tile', ts, tc.seq, x, y, '']
+
+        for oc in OptionClick.filter(player=p):
+            ts = oc.timestamp
+            option = oc.option
+            yield [session.code, participant.code, p.round_number,
+                   'option', ts, oc.seq, '', '', option]
+
+
 page_sequence = [IntroPage, TablePage, Results]
