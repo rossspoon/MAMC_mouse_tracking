@@ -135,13 +135,12 @@ def table_page_live_method(player, data):
 
 def select_random_round(player):
     all_rounds = player.in_all_rounds()
-    players = [p for p in all_rounds if p.choice_value > 0]
-
+    players = [p for p in all_rounds if p.choice_value]
     if len(players) == 0:
         return None
 
     selected_player = random.choice(players)
-    return selected_player
+    return player
 
 # PAGES
 
@@ -207,7 +206,7 @@ class TablePage(Page):
             if random_p:
                 participant = player.participant
                 participant.payoff = random_p.choice_value
-                participant.BONUS_ROUND = random_p.round_number
+                participant.BONUS_ROUND = random_p.field_maybe_none('round_number')
                 participant.BONUS_NUMBERS = random_p.field_maybe_none('numbers')
                 labels_raw = random_p.field_maybe_none('var_list')
                 if labels_raw:
