@@ -1,1 +1,0 @@
-# MAMC_table
