@@ -9,27 +9,27 @@ SESSION_CONFIGS = [
 
 dict(name='full_experiment',
      app_sequence=['information','instructions','quiz','tablemaker','survey'],
-     num_demo_participants=1),
+     num_demo_participants=2),
 
 dict(name='information',
      app_sequence=['information'],
-     num_demo_participants=1),
+     num_demo_participants=2),
 
 dict(name='instructions',
      app_sequence=['instructions'],
-     num_demo_participants=1),
+     num_demo_participants=2),
 
 dict(name='quiz',
      app_sequence=['quiz'],
-     num_demo_participants=1),
+     num_demo_participants=2),
 
 dict(name='tablemaker',
      app_sequence=['tablemaker'],
-     num_demo_participants=1),
+     num_demo_participants=2),
 
 dict(name='survey',
      app_sequence=['survey'],
-     num_demo_participants=1)
+     num_demo_participants=2)
 ]
 
 # if you set a property in SESSION_CONFIG_DEFAULTS, it will be inherited by all configs
