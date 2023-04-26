@@ -147,7 +147,7 @@ def select_random_round(player):
         return None
 
     selected_player = random.choice(players)
-    return player
+    return selected_player
 
 # PAGES
 
