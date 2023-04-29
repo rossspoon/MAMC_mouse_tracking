@@ -202,10 +202,13 @@ class TablePage(Page):
             start_time = int(player.start_time)
             player.duration = ts - start_time
 
-            # Tabulate the value of the choice
-            numbers = json.loads(player.numbers)
-            choice = player.field_maybe_none('choice')
-            if choice:
+
+        # Tabulate the value of the choice
+        # we will count their last option selected as a choice
+        # even if they don't submit it by clicking "Next"
+        numbers = json.loads(player.numbers)
+        choice = player.field_maybe_none('choice')
+        if choice:
                 player.choice_value = sum(numbers[choice])
 
         # calculate payout
