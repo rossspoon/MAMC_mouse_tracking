@@ -1,1 +1,1 @@
-# MAMC_table
+# MAMC with Blurred Mouse Tracking
