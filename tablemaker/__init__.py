@@ -11,6 +11,7 @@ Test app for generating the choice table.
 """
 
 VAR_LIST = [800, 400, 200, 100, 10]
+MEAN = 50
 
 # Assign treatments.  This is based off
 # of the id_in_group value of the player.
@@ -22,11 +23,11 @@ def creating_session(subsession):
 
 
 def get_attr_values(v, n):
-    return np.random.normal(loc=50, scale=np.sqrt(v), size=n).astype(int)
+    return np.random.normal(loc=MEAN, scale=np.sqrt(v), size=n).astype(int)
 
 
 def sample_var_list(variances=VAR_LIST):
-    va = random.sample(variances, 5)
+    va = random.sample(variances, len(variances))
     return va
 
 
@@ -127,13 +128,7 @@ def table_page_live_method(player, data):
     except TypeError:
         page_time = -1
 
-    if func == 'tile-click':
-        seq = data.get('seq')
-        x = data.get('x')
-        y = data.get('y')
-        TileClick.create(player=player, seq=seq, timestamp=page_time, x=x, y=y)
-
-    elif func == 'option-click':
+    if func == 'option-click':
         seq = data.get('seq')
         option = data.get('option')
         OptionClick.create(player=player, seq=seq, timestamp=page_time, option=option)
@@ -149,12 +144,37 @@ def select_random_round(player):
     selected_player = random.choice(players)
     return selected_player
 
+def ensure_var_list(player):
+    var_list_raw = player.field_maybe_none('var_list')
+    if var_list_raw:
+        var_list = json.loads(var_list_raw)
+    else:
+        # Here we generate the column list for the player
+        # control players do not get a scrambled list.
+        if player.is_control:
+            var_list = VAR_LIST
+        else:
+            var_list = sample_var_list()
+        player.var_list = json.dumps(var_list)
+
+    return var_list
+
+def ensure_numbers(player, var_list):
+    numbers_raw = player.field_maybe_none('numbers')
+    if numbers_raw:
+        numbers = json.loads(numbers_raw)
+    else:
+        numbers = get_numbers(variances=var_list)
+        player.numbers = json.dumps(numbers)
+
+    return numbers
+
 # PAGES
 
 class TablePage(Page):
     form_model = 'player'
     form_fields = ['choice']
-    timeout_seconds = 15
+    timeout_seconds = 1500
 
     @staticmethod
     def vars_for_template(player: Player):
@@ -162,34 +182,8 @@ class TablePage(Page):
             ts = round(time() * 1000)
             player.start_time = str(ts)
 
-        # retrieve the var_list or create a new one
-        var_list_raw = player.field_maybe_none('var_list')
-        if var_list_raw:
-            var_list = json.loads(var_list_raw)
-        else:
-            # Here we generate the column list for the player
-            # control players do not get a scrambled list.
-            if player.is_control:
-                var_list = VAR_LIST
-            else:
-                var_list = sample_var_list()
-            player.var_list = json.dumps(var_list)
 
-        # retrieve number grid or create a new one
-        numbers_raw = player.field_maybe_none('numbers')
-        if numbers_raw:
-            numbers = json.loads(numbers_raw)
-        else:
-            numbers = get_numbers(variances=var_list)
-            player.numbers = json.dumps(numbers)
-
-        # generate col_names from the var_list
-        col_names = get_col_names(variances=var_list)
-
-        return dict(numbers=numbers,
-                    column_names=col_names,
-                    indexes=list(range(len(numbers))),
-                    form_fields=['choice'],
+        return dict(form_fields=['choice'],
                     )
 
     @staticmethod
@@ -230,11 +224,26 @@ class TablePage(Page):
 
     @staticmethod
     def js_vars(player: Player):
+        # retrieve the var_list or create a new one
+        var_list = ensure_var_list(player)
+
+        # retrieve number grid or create a new one
+        numbers = ensure_numbers(player, var_list)
+
+        # generate col_names from the var_list
+        col_names = get_col_names(variances=var_list)
+
         # Number of clicks
-        tile_click_order = len(TileClick.filter(player=player))
-        opt_click_order = len(OptionClick.filter(player=player))
-        return dict(tile_click_order=tile_click_order,
-                    opt_click_order=opt_click_order)
+        tile_click_count = len(TileClick.filter(player=player))
+        opt_click_count = len(OptionClick.filter(player=player))
+        return dict(tile_click_count=tile_click_count,
+                    opt_click_count=opt_click_count,
+                    options=list(numbers.keys()),
+                    numbers=list(numbers.values()),
+                    column_names=col_names,
+                    blur_rad=12,
+                    circ_rad=35,
+                    )
 
     live_method = table_page_live_method
 
@@ -284,4 +293,4 @@ def custom_export(players):
                    'option', ts, oc.seq, '', '', option]
 
 
-page_sequence = [IntroPage, TablePage, Results]
+page_sequence = [TablePage, Results]

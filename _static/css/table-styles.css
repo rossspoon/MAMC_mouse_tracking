@@ -1,8 +1,12 @@
-.choice-tab td, .choice-tab th{
+.typical-cell{
     border: solid black 2px;
     padding: 20px;
     font-size: 35px;
     text-align: center;
+}
+
+.big-cell{
+    padding: 0px;
 }
 
 .choice-rad {

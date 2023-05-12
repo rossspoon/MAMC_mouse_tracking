@@ -5,19 +5,17 @@
     <link rel="stylesheet" type="text/css" href="{{ static 'css/table-styles.css' }}">
     <link rel="stylesheet" type="text/css" href="{{ static 'css/global-styles.css' }}">
     <script src="{{ static 'js/table.js' }}"></script>
+    <script src="{{ static 'js/blur.js' }}"></script>
 
     {{ formfield_errors 'choice' }}
     <input type="hidden" name="choice" id="choice"/>
 
-    <table class="choice-tab">
+    <table class="choice-tab" id="tableau">
         <thead>
-          <tr>
-            {{ for name in column_names }}
-            <th>{{ name }}</th>
-            {{ endfor }}
-          </tr>
+            <tr></tr>
         </thead>
         <tbody>
+        {#
         {{ for key, r in numbers.items() }}
 
         <tr>
@@ -34,7 +32,9 @@
             {{ endfor }}
         </tr>
         {{ endfor }}
+        #}
         </tbody>
+
     </table>
     <div class="button-row">
         {{ next_button }}
